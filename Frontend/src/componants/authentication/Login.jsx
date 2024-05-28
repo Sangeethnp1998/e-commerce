@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import axios from 'axios'
+import axios from 'axios';
+import { config } from '../../config/config';
 import { VStack,Input, InputGroup, InputRightElement,Button, useToast ,FormControl,FormLabel  } from '@chakra-ui/react'
 import { ViewIcon ,ViewOffIcon} from '@chakra-ui/icons'
 import { useNavigate } from 'react-router-dom';
@@ -31,7 +32,7 @@ export const Login = () => {
                 password
             }
 
-            const { data } = await axios.post('http://localhost:5000/api/user/login',body);
+            const { data } = await axios.post(`${config.apiUrl}user/login`,body);
 
             toast({
                     title: "Login Successful",
