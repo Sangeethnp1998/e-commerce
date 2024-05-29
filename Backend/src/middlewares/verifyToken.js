@@ -18,7 +18,7 @@ const verifyToken = async (req, res, next) => {
     } catch (error) {
       error.message = 'Not authorized , token failed'
       res.status(401).send({
-        message: error.message
+        message: error.message,
       })
     }
   }
@@ -30,4 +30,4 @@ const verifyToken = async (req, res, next) => {
   }
 }
 
-module.exports = {verifyToken}
+module.exports = { verifyToken }

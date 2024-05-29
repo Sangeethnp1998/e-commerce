@@ -9,7 +9,6 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write ."
-    
   },
   "jest": {
     "testEnvironment": "node"
