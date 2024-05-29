@@ -92,23 +92,7 @@ export const PlaceOrder = () => {
       flexDirection="column"
       justifyContent="space-between"
     >
-      <Box
-        position="fixed"
-        top={0}
-        left={0}
-        right={0}
-        width="100%"
-        background="aliceblue"
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        zIndex="10"
-      >
-        <Text fontSize="2xl" fontWeight="bold" mb={4} alignSelf="center">
-          Review Your Order
-        </Text>
-      </Box>
-      <Box paddingTop="54px" paddingBottom="67px">
+      <Box  paddingTop='60px'  paddingBottom="67px">
         <VStack spacing={4} align="stretch">
           {items.map((item) => (
             <HStack key={item.id} justifyContent="space-between">

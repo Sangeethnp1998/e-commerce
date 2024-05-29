@@ -47,7 +47,7 @@ function Navbar() {
   }, [location.pathname, onClose]);
 
   return (
-    <Box width="100%">
+    <Box width="100%" position='fixed' zIndex={10}>
       <Flex
         bg={useColorModeValue("white", "gray.800")}
         color={useColorModeValue("gray.600", "white")}

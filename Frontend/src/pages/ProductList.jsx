@@ -28,9 +28,7 @@ const ProductList = () => {
       setCart(JSON.parse(localStorage.getItem("cart")));
     }
   }, []);
-  // useEffect(()=>{
-  //     console.log('cart',JSON.stringify(cart))
-  // },[cart])
+
   return (
     <Box display="flex" flexFlow="wrap">
       {productList.map((product) => {
