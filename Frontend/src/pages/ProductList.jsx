@@ -16,26 +16,32 @@ const fetchProducts = async() =>{
     return data;
 }
 const ProductList = () => {
-    const [productList,setproductList] = useState([])
+    const [productList,setproductList] = useState([]);
+    const [cart,setCart] = useState([])
     useEffect(()=>{
         async function apiCall(){
             const products = await fetchProducts();
             setproductList(products.products)
         }
-        apiCall()
+        apiCall();
+        if(localStorage.getItem('cart')){
+            setCart(JSON.parse(localStorage.getItem('cart')))
+        }
     },[])
+    // useEffect(()=>{
+    //     console.log('cart',JSON.stringify(cart))
+    // },[cart])
     return (
         <Box
             display='flex'
             flexFlow= 'wrap'
         >
-            {/* <SimpleGrid columns={8} spacing={6} > */}
-                {
-                    productList.map((product)=>{
-                        return <ProductCard product={product}/>
-                    })
-                }
-            {/* </SimpleGrid> */}
+            {
+                productList.map((product)=>{
+                    return <ProductCard key={product._id} product= { product } cart={cart} setCart={setCart} />
+                })
+            }
+
         </Box>
        
     )
