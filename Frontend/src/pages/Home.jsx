@@ -1,10 +1,25 @@
-import React from "react";
-import { Container, Box, Text } from "@chakra-ui/react";
-import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
+import {
+  Box,
+  Container,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
+  Text,
+} from "@chakra-ui/react";
+import { useSelector } from "react-redux";
+
+import { Navigate } from "react-router-dom";
 import { Login } from "../componants/authentication/Login";
 import { SignUp } from "../componants/authentication/SignUp";
+import { selectAuth } from "../store/auth";
 
 export const Home = () => {
+  const auth = useSelector(selectAuth);
+
+  if (!auth.isRestored) return null;
+  if (auth.user) return <Navigate to="/products" replace />;
   return (
     <Container maxW="xl" centerContent>
       <Box

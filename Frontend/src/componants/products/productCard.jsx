@@ -2,20 +2,37 @@
 
 import { Box, Image, Text, Button, useToast } from "@chakra-ui/react";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
-export const ProductCard = ({ product, cart, setCart }) => {
-  const [quantity, setQuantity] = useState(0);
+import { addToCart, selectCartProducts } from "../../store/cart";
+
+export const ProductCard = ({ product }) => {
+  const dispatch = useDispatch();
+  const cart = useSelector(selectCartProducts);
+
   const toast = useToast();
+  const [quantity, setQuantity] = useState(0);
 
-  // const handleIncrement = () => {
-  //   setQuantity((prevQuantity) => prevQuantity + 1);
-  // };
+  const handleIncrement = () => {
+    setQuantity((prevQuantity) => prevQuantity + 1);
+  };
 
-  // const handleDecrement = () => {
-  //   setQuantity((prevQuantity) => Math.max(prevQuantity - 1, 0));
-  // };
+  const handleDecrement = () => {
+    setQuantity((prevQuantity) => Math.max(prevQuantity - 1, 0));
+  };
 
   const handleAddToCart = () => {
+    if (quantity === 0) {
+      toast({
+        title: "Please select a quantity",
+        status: "warning",
+        duration: 1000,
+        isClosable: true,
+        position: "top",
+      });
+      return;
+    }
+
     const cartItem = {
       _id: product._id,
       name: product.name,
@@ -36,7 +53,7 @@ export const ProductCard = ({ product, cart, setCart }) => {
         position: "top",
       });
     } else {
-      setCart((cart) => [...cart, cartItem]);
+      dispatch(addToCart(cartItem));
 
       toast({
         title: "Added to cart successfully",
@@ -45,8 +62,6 @@ export const ProductCard = ({ product, cart, setCart }) => {
         isClosable: true,
         position: "top",
       });
-      //adding to localStorage
-      localStorage.setItem("cart", JSON.stringify([...cart, cartItem]));
     }
   };
 
@@ -67,7 +82,7 @@ export const ProductCard = ({ product, cart, setCart }) => {
         </Text>
         <Text>${product.price}</Text>
         <Box mt="2">
-          {/* <Button size="sm" onClick={handleDecrement}>
+          <Button size="sm" onClick={handleDecrement}>
             -
           </Button>
           <Text display="inline-block" mx="2">
@@ -75,7 +90,7 @@ export const ProductCard = ({ product, cart, setCart }) => {
           </Text>
           <Button size="sm" onClick={handleIncrement}>
             +
-          </Button> */}
+          </Button>
           <Button mt="2" colorScheme="teal" onClick={handleAddToCart}>
             Add to Cart
           </Button>

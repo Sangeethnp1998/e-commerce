@@ -4,24 +4,35 @@ const Product = require('../model/productModel')
 //create Order
 const createOrder = async (req, res, next) => {
   try {
-    const { product, quantity } = req.body
-    const userId = req.user._id
-    const productExists = await Product.findById(product)
-    const totalAmount = quantity * productExists.price
-    const order = await Order.create({
-      user: userId,
-      product,
-      quantity,
-      totalAmount,
-    })
-
-    const populatedOrder = await Order.findById(order._id)
+    const cartProducts = req.body.cart;
+    const orderPromises = cartProducts.map(async(cart) => {
+      const { product, quantity } = cart
+      const userId = req.user._id
+      const productExists = await Product.findById(product)
+      const totalAmount = quantity * productExists.price
+      const order = await Order.create({
+        user: userId,
+        product,
+        quantity,
+        totalAmount
+      })
+      const populatedOrder = await Order.findById(order._id)
       .populate('user', '_id')
       .populate('product', 'name -_id')
 
+      const orderObject = {
+        _id: order.id,
+        order: populatedOrder,
+      }
+      // orders.push(orderObject)
+      return orderObject
+    });
+    
+    // Wait for all order promises to resolve
+    const orders = await Promise.all(orderPromises);
+
     res.status(201).json({
-      _id: order.id,
-      order: populatedOrder,
+      orders
     })
   } catch (error) {
     next(error)

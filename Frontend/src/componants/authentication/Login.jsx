@@ -1,25 +1,28 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { config } from "../../config/config";
+import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import {
-  VStack,
+  Button,
+  FormControl,
+  FormLabel,
   Input,
   InputGroup,
   InputRightElement,
-  Button,
+  VStack,
   useToast,
-  FormControl,
-  FormLabel,
 } from "@chakra-ui/react";
-import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
+import { signIn, selectAuth } from "../../store/auth";
+
 export const Login = () => {
+  const dispatch = useDispatch();
+  const auth = useSelector(selectAuth);
+
   const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
   const toast = useToast();
   const navigate = useNavigate();
 
@@ -28,43 +31,31 @@ export const Login = () => {
       toast({
         title: "Please fill all the fields.",
         status: "warning",
-        duration: 5000,
+        duration: 500,
         isClosable: true,
         position: "top",
       });
-      setLoading(false);
       return;
     }
-    try {
-      const body = {
-        email,
-        password,
-      };
 
-      const { data } = await axios.post(`${config.apiUrl}user/login`, body);
-
-      toast({
-        title: "Login Successful",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-        position: "top",
-      });
-      localStorage.setItem("userInfo", JSON.stringify(data));
-      setLoading(false);
-      navigate("/products");
-    } catch (error) {
-      toast({
-        title: "An Error Occured",
-        description: error.response.data.message,
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-        position: "top",
-      });
-      setLoading(false);
-    }
+    dispatch(
+      signIn(
+        { email, password },
+        () => navigate("/products"),
+        (error) => {
+          toast({
+            title: "An Error Occured",
+            description: error?.response?.data?.message || error?.message,
+            status: "error",
+            duration: 500,
+            isClosable: true,
+            position: "top",
+          });
+        },
+      ),
+    );
   };
+
   return (
     <VStack spacing="5px">
       <FormControl id="email" isRequired>
@@ -102,20 +93,9 @@ export const Login = () => {
         width="100%"
         style={{ marginTop: 15 }}
         onClick={submitHandler}
-        isLoading={loading}
+        isLoading={auth.isLoading}
       >
         Log In
-      </Button>
-      <Button
-        variant="solid"
-        colorScheme="red"
-        width="100%"
-        onClick={() => {
-          setEmail("guest@example.com");
-          setPassword("123456");
-        }}
-      >
-        Get Guest User Credentials
       </Button>
     </VStack>
   );

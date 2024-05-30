@@ -1,45 +1,22 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { config } from "../config/config";
+import { Box } from "@chakra-ui/react";
+import { useEffect } from "react";
+
+import { useDispatch, useSelector } from "react-redux";
 import { ProductCard } from "../componants/products/productCard";
-import { Box, Container, SimpleGrid } from "@chakra-ui/react";
+import { fetchProducts, selectProducts } from "../store/products";
 
-const getUser = () => {
-  return JSON.parse(localStorage.getItem("userInfo"));
-};
-
-const fetchProducts = async () => {
-  const user = getUser();
-  const headers = { Authorization: `Bearer ${user.token}` };
-
-  const { data } = await axios.get(`${config.apiUrl}product/list`, { headers });
-  return data;
-};
 const ProductList = () => {
-  const [productList, setproductList] = useState([]);
-  const [cart, setCart] = useState([]);
+  const dispatch = useDispatch();
+  const productList = useSelector(selectProducts);
+
   useEffect(() => {
-    async function apiCall() {
-      const products = await fetchProducts();
-      setproductList(products.products);
-    }
-    apiCall();
-    if (localStorage.getItem("cart")) {
-      setCart(JSON.parse(localStorage.getItem("cart")));
-    }
-  }, []);
+    dispatch(fetchProducts());
+  }, [dispatch]);
 
   return (
-    <Box display="flex" flexFlow="wrap">
+    <Box display="flex" flexFlow="wrap" p="76px 16px 32px 16px">
       {productList.map((product) => {
-        return (
-          <ProductCard
-            key={product._id}
-            product={product}
-            cart={cart}
-            setCart={setCart}
-          />
-        );
+        return <ProductCard key={product._id} product={product} />;
       })}
     </Box>
   );

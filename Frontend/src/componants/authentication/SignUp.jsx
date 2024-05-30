@@ -1,20 +1,24 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { config } from "../../config/config";
+import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import {
-  VStack,
+  Button,
+  FormControl,
+  FormLabel,
   Input,
   InputGroup,
   InputRightElement,
-  Button,
+  VStack,
   useToast,
-  FormControl,
-  FormLabel,
 } from "@chakra-ui/react";
-import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
+import { selectAuth, signUp } from "../../store/auth";
+
 export const SignUp = () => {
+  const dispatch = useDispatch();
+  const auth = useSelector(selectAuth);
+
   const [showPass, setShowpass] = useState(false);
   const [showConfirm, setShowconfirm] = useState(false);
   const handleClickPass = () => setShowpass(!showPass);
@@ -24,62 +28,47 @@ export const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [loading, setLoading] = useState(false);
   const toast = useToast();
   const navigate = useNavigate();
 
   const submitHandler = async () => {
-    setLoading(true);
     if (!name || !email || !password || !confirmPassword) {
       toast({
         title: "Please fill all the fields.",
         status: "warning",
-        duration: 5000,
+        duration: 500,
         isClosable: true,
         position: "top",
       });
-      setLoading(false);
       return;
     }
     if (password !== confirmPassword) {
       toast({
         title: "Password and Confirm password should be same.",
         status: "error",
-        duration: 5000,
+        duration: 500,
         isClosable: true,
         position: "top",
       });
-      setLoading(false);
       return;
     }
-    try {
-      let reqBody = {
-        name,
-        email,
-        password,
-      };
-      const { data } = await axios.post(`${config.apiUrl}user`, reqBody);
-      toast({
-        title: "Registration Successful",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-        position: "top",
-      });
-      localStorage.setItem("userInfo", JSON.stringify(data));
-      setLoading(false);
-      navigate("/products");
-    } catch (error) {
-      toast({
-        title: "An Error Occured",
-        description: error.response.data.message,
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-        position: "top",
-      });
-      setLoading(false);
-    }
+
+    dispatch(
+      signUp(
+        { name, email, password },
+        () => navigate("/products"),
+        (error) => {
+          toast({
+            title: "An Error Occured",
+            description: error?.response?.data?.message || error?.message,
+            status: "error",
+            duration: 500,
+            isClosable: true,
+            position: "top",
+          });
+        },
+      ),
+    );
   };
 
   return (
@@ -145,7 +134,7 @@ export const SignUp = () => {
         width="100%"
         style={{ marginTop: 15 }}
         onClick={submitHandler}
-        isLoading={loading}
+        isLoading={auth.isLoading}
       >
         Sign Up
       </Button>

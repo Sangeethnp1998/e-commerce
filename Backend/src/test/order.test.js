@@ -47,13 +47,13 @@ describe('order', () => {
   it('should create an order', async () => {
     const product = { _id: '1234', price: 100, name: 'test_product' }
     const user = { _id: '2222', name: 'test_user' }
-    // const order = {
-    //   _id: '1111',
-    //   user: '2222',
-    //   product: '1234',
-    //   quantity: 2,
-    //   totalAmount: 200,
-    // };
+    const order = {
+      _id: '1111',
+      user: '2222',
+      product: '1234',
+      quantity: 2,
+      totalAmount: 200,
+    };
     const mockSelect = jest.fn().mockResolvedValue(user)
     const mockOrderPopulate = jest.fn().mockReturnThis()
 
