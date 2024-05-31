@@ -70,12 +70,12 @@ export const ProductCard = ({ product }) => {
       borderWidth="1px"
       borderRadius="lg"
       overflow="hidden"
-      height="fit-content"
+      height="400px"
       w="160px"
       m="5px"
       background="#79caed"
     >
-      <Image src={product.image} alt={product.name} />
+      <Image src={product.image} alt={product.name} h='200px' />
       <Box p="4">
         <Text fontSize="lg" fontWeight="semibold">
           {product.name}
