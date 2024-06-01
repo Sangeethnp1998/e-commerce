@@ -68,32 +68,81 @@ export const ProductCard = ({ product }) => {
   return (
     <Box
       borderWidth="1px"
+      borderColor="gray.200"
+      boxShadow="base"
       borderRadius="lg"
       overflow="hidden"
-      height="400px"
-      w="160px"
-      m="5px"
-      background="#79caed"
+      background="gray.50"
+      display="flex"
+      flexDir="column"
     >
-      <Image src={product.image} alt={product.name} h='200px' />
-      <Box p="4">
-        <Text fontSize="lg" fontWeight="semibold">
-          {product.name}
-        </Text>
-        <Text>${product.price}</Text>
-        <Box mt="2">
-          <Button size="sm" onClick={handleDecrement}>
-            -
-          </Button>
-          <Text display="inline-block" mx="2">
-            {quantity}
+      <Image
+        src={product.image}
+        alt={product.name}
+        h="200px"
+        w="100%"
+        objectFit="contain"
+        backgroundColor="gray.300"
+      />
+      <Box
+        p="4"
+        display="flex"
+        flexDir="column"
+        flexGrow="1"
+        justifyContent="space-between"
+      >
+        <Box>
+          <Text fontSize="lg" fontWeight="medium">
+            {product.name}
           </Text>
-          <Button size="sm" onClick={handleIncrement}>
-            +
-          </Button>
-          <Button mt="2" colorScheme="teal" onClick={handleAddToCart}>
-            Add to Cart
-          </Button>
+          <Text fontSize="xl" color="teal.600" fontWeight="semibold">
+            ${product.price}
+          </Text>
+        </Box>
+        <Box mt="4">
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            gap="4"
+          >
+            <Box display="flex" alignItems="center">
+              <Button
+                borderWidth="1px"
+                borderColor="gray.200"
+                h="36px"
+                w="36px"
+                flexShrink="0"
+                size="sm"
+                onClick={handleDecrement}
+                colorScheme="gray"
+                rounded="50%"
+                fontSize="large"
+              >
+                -
+              </Button>
+              <Text mx="2" fontSize="medium">
+                {quantity}
+              </Text>
+              <Button
+                borderWidth="1px"
+                borderColor="gray.200"
+                h="36px"
+                w="36px"
+                flexShrink="0"
+                size="sm"
+                onClick={handleIncrement}
+                colorScheme="gray"
+                rounded="50%"
+                fontSize="large"
+              >
+                +
+              </Button>
+            </Box>
+            <Button colorScheme="teal" onClick={handleAddToCart}>
+              Add to Cart
+            </Button>
+          </Box>
         </Box>
       </Box>
     </Box>

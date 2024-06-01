@@ -1,4 +1,4 @@
-import { Box } from "@chakra-ui/react";
+import { Box, SimpleGrid } from "@chakra-ui/react";
 import { useEffect } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -14,10 +14,12 @@ const ProductList = () => {
   }, [dispatch]);
 
   return (
-    <Box display="flex" flexFlow="wrap" p="76px 16px 32px 16px">
-      {productList.map((product) => {
-        return <ProductCard key={product._id} product={product} />;
-      })}
+    <Box p="84px 16px 48px 16px">
+      <SimpleGrid minChildWidth="240px" spacing={4}>
+        {productList.map((product) => {
+          return <ProductCard key={product._id} product={product} />;
+        })}
+      </SimpleGrid>
     </Box>
   );
 };
