@@ -20,6 +20,49 @@ import {
   updateQuantity,
 } from "../store/cart";
 
+const QuantitySelect = ({
+  quantity,
+  onIncrement,
+  onDecrement,
+  display = "flex",
+  mt,
+}) => (
+  <Box display={display} alignItems="center">
+    <Button
+      borderWidth="1px"
+      borderColor="gray.200"
+      h="36px"
+      w="36px"
+      flexShrink="0"
+      size="sm"
+      onClick={onDecrement}
+      colorScheme="gray"
+      rounded="50%"
+      fontSize="large"
+      mt={mt}
+    >
+      -
+    </Button>
+    <Text mx="2" fontSize="medium">
+      {quantity}
+    </Text>
+    <Button
+      borderWidth="1px"
+      borderColor="gray.200"
+      h="36px"
+      w="36px"
+      flexShrink="0"
+      size="sm"
+      onClick={onIncrement}
+      colorScheme="gray"
+      rounded="50%"
+      fontSize="large"
+    >
+      +
+    </Button>
+  </Box>
+);
+
 export const PlaceOrder = () => {
   const dispatch = useDispatch();
   const items = useSelector(selectCartProducts);
@@ -49,6 +92,14 @@ export const PlaceOrder = () => {
     dispatch(updateQuantity({ id: itemId, quantity: newQuantity }));
   };
 
+  const handleIncrement = (itemId, itemQuantity) => {
+    handleQuantityChange(itemId, itemQuantity + 1);
+  };
+
+  const handleDecrement = (itemId, itemQuantity) => {
+    handleQuantityChange(itemId, itemQuantity - 1);
+  };
+
   const handlePlaceOrder = () => {
     toast({
       title: "Your order has been placed",
@@ -76,7 +127,11 @@ export const PlaceOrder = () => {
             <Fragment key={item._id}>
               <Box
                 display="grid"
-                gridTemplateColumns="3fr repeat(3, 1fr)"
+                gridTemplateColumns={{
+                  base: "1fr",
+                  sm: "3fr 1fr",
+                  md: "3fr repeat(3, 1fr)",
+                }}
                 alignItems="center"
                 columnGap="4"
               >
@@ -88,48 +143,54 @@ export const PlaceOrder = () => {
                     objectFit="contain"
                     boxSize="150px"
                   />
-                  <Text ml="5" fontWeight="medium" fontSize="lg">
-                    {item.name}
-                  </Text>
+                  <Box ml="5">
+                    <Text fontWeight="medium" fontSize="lg">
+                      {item.name}
+                    </Text>
+                    <QuantitySelect
+                      quantity={item.quantity}
+                      onIncrement={() =>
+                        handleIncrement(item._id, Number(item.quantity))
+                      }
+                      onDecrement={() =>
+                        handleDecrement(item._id, Number(item.quantity))
+                      }
+                      display={{ base: "flex", md: "none" }}
+                      mt="1"
+                    />
+                    <Text
+                      display={{ base: "flex", md: "none" }}
+                      justifySelf="center"
+                      fontWeight="semibold"
+                      fontSize="xl"
+                      color="teal.600"
+                      mt="1"
+                    >
+                      ${(item.price * item.quantity).toFixed(2)}
+                    </Text>
+                    <Button
+                      display={{ base: "flex", sm: "none" }}
+                      colorScheme="red"
+                      onClick={() => handleRemoveFromCart(item._id)}
+                      justifySelf="end"
+                      mt="1"
+                    >
+                      Remove
+                    </Button>
+                  </Box>
                 </Box>
-                <Box display="flex" alignItems="center">
-                  <Button
-                    borderWidth="1px"
-                    borderColor="gray.200"
-                    h="36px"
-                    w="36px"
-                    flexShrink="0"
-                    size="sm"
-                    onClick={() =>
-                      handleQuantityChange(item._id, Number(item.quantity) - 1)
-                    }
-                    colorScheme="gray"
-                    rounded="50%"
-                    fontSize="large"
-                  >
-                    -
-                  </Button>
-                  <Text mx="2" fontSize="medium">
-                    {item.quantity}
-                  </Text>
-                  <Button
-                    borderWidth="1px"
-                    borderColor="gray.200"
-                    h="36px"
-                    w="36px"
-                    flexShrink="0"
-                    size="sm"
-                    onClick={() =>
-                      handleQuantityChange(item._id, Number(item.quantity) + 1)
-                    }
-                    colorScheme="gray"
-                    rounded="50%"
-                    fontSize="large"
-                  >
-                    +
-                  </Button>
-                </Box>
+                <QuantitySelect
+                  quantity={item.quantity}
+                  onIncrement={() =>
+                    handleIncrement(item._id, Number(item.quantity))
+                  }
+                  onDecrement={() =>
+                    handleDecrement(item._id, Number(item.quantity))
+                  }
+                  display={{ base: "none", md: "flex" }}
+                />
                 <Text
+                  display={{ base: "none", md: "flex" }}
                   justifySelf="center"
                   fontWeight="semibold"
                   fontSize="xl"
@@ -138,6 +199,7 @@ export const PlaceOrder = () => {
                   ${(item.price * item.quantity).toFixed(2)}
                 </Text>
                 <Button
+                  display={{ base: "none", sm: "flex" }}
                   colorScheme="red"
                   onClick={() => handleRemoveFromCart(item._id)}
                   justifySelf="end"
@@ -163,28 +225,41 @@ export const PlaceOrder = () => {
         background="gray.200"
         boxShadow="base"
         p={4}
-        display="flex"
-        alignItems="center"
         zIndex="10"
       >
         <Box
-          size="lg"
-          borderRadius="10px"
-          w="50%"
+          maxW="960px"
+          mx="auto"
+          w="90%"
           display="flex"
-          justifyContent="center"
           alignItems="center"
+          justifyContent="space-between"
+          gap="2"
         >
-          <Text fontSize="2xl" fontWeight="bold">
-            Total:{" "}
-            <Text display="inline" color="teal.600">
-              ${calculateTotal().toFixed(2)}
+          <Box
+            size="lg"
+            borderRadius="10px"
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+          >
+            <Text fontSize={{ base: "lg", sm: "2xl" }} fontWeight="bold">
+              Total:{" "}
+              <Text display="inline" color="teal.600">
+                ${calculateTotal().toFixed(2)}
+              </Text>
             </Text>
-          </Text>
+          </Box>
+          <Button
+            onClick={handlePlaceOrder}
+            colorScheme="teal"
+            size="lg"
+            w="50%"
+            flexShrink="0"
+          >
+            Place Order
+          </Button>
         </Box>
-        <Button onClick={handlePlaceOrder} colorScheme="teal" size="lg" w="50%">
-          Place Order
-        </Button>
       </Box>
     </Box>
   );
